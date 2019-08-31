@@ -1,0 +1,29 @@
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
+import cv2
+import numpy as np
+import os
+
+path=r"C:\Users\Tanveer\Desktop\CNNModel\Dataset\DataSet2\non"
+IMAGSIZE=512
+datagen= ImageDataGenerator(zoom_range=0.18, brightness_range=(0.5, 1.1))
+
+imgcount=1
+for img in os.listdir(path):
+    try:
+        image_array=cv2.imread(os.path.join(path,img), cv2.IMREAD_GRAYSCALE)
+        new_img=cv2.resize(image_array,(IMAGSIZE,IMAGSIZE))
+        X=np.array(new_img).reshape(-1, IMAGSIZE, IMAGSIZE, 1)
+        datagen.fit(X)
+        if imgcount==3000:
+            break
+        i=0
+        name=str(imgcount)
+        for im in datagen.flow(X, batch_size=4, seed=1, save_to_dir="Data_Augmentation", save_prefix=name, save_format="png"):
+            i+=1
+            imgcount=imgcount+1
+            if(i==10):
+                break
+    except Exception as e:
+        print(e)
